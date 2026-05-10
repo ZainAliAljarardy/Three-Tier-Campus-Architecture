@@ -1,35 +1,35 @@
 # Campus Network Infrastructure Project 🌐
 
-هذا المستودع يحتوي على ملفات التكوين لشبكة مؤسسية تعتمد على التصميم الهرمي ثلاثي الطبقات (**Three-Tier Architecture**)، مع التركيز على توزيع الأحمال الذكي (Load Sharing) في طبقة التوزيع.
+This repository contains the configuration files for a high-availability enterprise network based on the **Three-Tier Hierarchical Design**. The project focuses on intelligent **Load Sharing** and deterministic path selection at the Distribution Layer.
 
 ---
 
-## 🏗️ مخطط الشبكة (Network Topology)
+## 🏗️ Network Topology
 
-تعتمد الشبكة على تصميم **Hierarchical Model** لضمان استقرار الخدمة وتوزيع المهام بين الأجهزة:
+The architecture follows the Cisco Hierarchical Model to ensure scalability, resilience, and ease of management.
 
 ![Network Design](Three-Tier.png)
 
 ---
 
-## 🛠️ التقنيات والبروتوكولات (Tech Stack)
+## 🛠️ Tech Stack & Protocols
 
 ### **High Availability & Load Sharing**
-* **VRRP Active-Active:** توزيع الأدوار بحيث يعمل كل جهاز كبوابة رئيسية (Primary Gateway) لمجموعة محددة من الـ VLANs وبوابة احتياطية للمجموعة الأخرى.
-* **VLAN-Based Spanning Tree (MST/PVST):** تخصيص أولوية الـ **Root Bridge** لكل VLAN بشكل مستقل، لضمان تطابق مسار الطبقة الثانية (L2 Path) مع مخرج الطبقة الثالثة (L3 Gateway).
-* **Rapid-PVST+:** تسريع عملية التقارب (Convergence) ومنع الحلقات في الشبكة.
-* **VTP v3:** إدارة مركزية وآمنة لقواعد بيانات الـ VLANs عبر نطاقات (Domains) منفصلة.
+* **VRRP Active-Active:** Roles are distributed so that each switch acts as a **Primary Gateway** for specific VLANs and a **Backup Gateway** for others, ensuring 100% hardware utilization.
+* **Per-VLAN Spanning Tree (PVST+):** Customized **Root Bridge** priorities for each VLAN to align Layer 2 forwarding paths with Layer 3 routing exits.
+* **Rapid-PVST+:** Ensures loop-free topology with ultra-fast convergence times.
+* **VTP v3:** Provides secure and centralized VLAN database management across isolated domains.
 
 ### **Routing & Services**
-* **Multi-Area OSPF:** ربط طبقة التوزيع بالـ Core عبر Area 0 و Area 1 و Area 2 لعزل ترافيك الأقسام.
-* **LACP EtherChannel:** تجميع الروابط لزيادة السرعة بين السويتشات وتوفير مسارات بديلة.
-* **DHCP Pools:** توزيع العناوين محلياً على مستوى طبقة التوزيع لتقليل التأخير.
+* **Multi-Area OSPF:** Connects the Distribution layer to the Core via Area 0, Area 1, and Area 2 to optimize routing tables and isolate traffic.
+* **LACP EtherChannel:** Link aggregation used to increase bandwidth between switches and provide physical redundancy.
+* **DHCP Pools:** Localized address allocation at the Distribution layer to reduce latency and broadcast traffic.
 
 ---
 
-## 📁 توزيع المهام والتحكم في المسارات (Distribution Layer Matrix)
+## 📁 Distribution Layer Operations Matrix
 
-| الجهاز | القطاع | الدور الوظيفي | الـ VLANs (Primary / Root) | STP Priority |
+| Device | Sector | Functional Role | Primary VLANs (Root/Master) | STP Priority |
 | :--- | :--- | :--- | :--- | :--- |
 | **Distrib-1** | South | Multi-Service Gateway | Marketing & IT (10, 20) | 24576 |
 | **Distrib-2** | South | Multi-Service Gateway | Account & HR (30, 40) | 24576 |
@@ -38,13 +38,14 @@
 
 ---
 
-## 🚀 ملاحظات التوثيق
+## 🚀 Key Engineering Notes
 
-1. **Deterministic Pathing:** تم ضبط قيم الـ `Priority` في الـ STP والـ VRRP بشكل متزامن لضمان سلوك شبكة "محدد مسبقاً" وتجنب المسارات غير المثالية (Sub-optimal routing).
-2. **Isolation:** فصل الشمال عن الجنوب منطقياً عبر VTP Domains مختلفة (abc & xyz) لتعزيز الأمان وتقليل نطاق بث الـ VLANs.
-3. **Efficiency:** هذا التصميم يلغي وجود الأجهزة الخاملة، حيث تتم معالجة البيانات وتوزيعها عبر جميع الروابط المتاحة بالتوازي.
+1. **Deterministic Pathing:** STP and VRRP priorities are manually synchronized to ensure predictable traffic flow and prevent sub-optimal "triangular" routing.
+2. **Logical Isolation:** North and South sectors are logically separated using different VTP Domains (`abc` & `xyz`) to enhance security and limit failure domains.
+3. **No Idle Hardware:** By utilizing an Active-Active design, the network avoids "Standby" waste, processing data across all available links and processors simultaneously.
 
 ---
 
-## 👨‍💻 إشراف المهندس
+## 👨‍💻 Engineer's Oversight
+**This infrastructure is designed and documented to achieve 99.99% uptime and maximum throughput efficiency.**ندس
 **تم تصميم وتوثيق هذه الشبكة لتعمل بأقصى كفاءة ممكنة مع ضمان توافر الخدمة بنسبة 99.99%.**
