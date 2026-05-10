@@ -47,5 +47,4 @@ The architecture follows the Cisco Hierarchical Model to ensure scalability, res
 ---
 
 ## 👨‍💻 Engineer's Oversight
-**This infrastructure is designed and documented to achieve 99.99% uptime and maximum throughput efficiency.**ندس
-**تم تصميم وتوثيق هذه الشبكة لتعمل بأقصى كفاءة ممكنة مع ضمان توافر الخدمة بنسبة 99.99%.**
+**This infrastructure is designed and documented to achieve 99.99% uptime and maximum throughput efficiency.**
